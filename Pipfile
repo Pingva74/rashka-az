@@ -1,0 +1,15 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+yamllint = "*"
+molecule = "*"
+ansible-lint = {extras = ["yamllint"], version = "*"}
+
+[packages]
+ansible = ">=2.9,<2.10"
+
+[requires]
+python_version = "3"
