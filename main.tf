@@ -41,7 +41,7 @@ resource "azurerm_virtual_network" "vnet" {
     resource_group_name = azurerm_resource_group.rg.name
 }
 
-esource "azurerm_linux_virtual_machine" "example" {
+resource "azurerm_linux_virtual_machine" "example" {
   name                = "reven-vm1"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
