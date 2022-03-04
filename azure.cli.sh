@@ -23,6 +23,7 @@ az network vnet create \
   --address-prefixes 10.1.0.0/16 \
   --subnet-name revensubnet2 \
   --subnet-prefixes 10.1.0.0/24
+
 az vm create \
   --resource-group $resourceGroup \
   --name revenvm1 \
@@ -33,6 +34,7 @@ az vm create \
   --admin-password my-super-puper-password \
   --output json \
   --verbose
+
 az vm create \
   --resource-group $resourceGroup \
   --name revenvm2 \
@@ -43,6 +45,7 @@ az vm create \
   --admin-password my-super-puper-password \
   --output json \
   --verbose
+
 az vm create \
   --resource-group $resourceGroup \
   --name revenvm3 \
