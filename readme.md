@@ -3,5 +3,5 @@
 Run with play
 
 ```sh
-./play playbook.yml
+./play docker.yml
 ```
