@@ -18,6 +18,8 @@ terraform plan -out main.tfplan
 terraform apply "main.tfplan"
 
 # Copy IPs to the >> inventory/hosts.all
+echo '[docker]' > inventory/hosts.all &&
+  terraform output -raw ip >> inventory/hosts.all
 
 ./play docker.yml
 ```
