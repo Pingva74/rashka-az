@@ -102,6 +102,12 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
+# Connect the security group to the network interface
+resource "azurerm_network_interface_security_group_association" "nic2nSG" {
+  network_interface_id      = azurerm_network_interface.nic.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
+
 # Create a virtual machines
 resource "azurerm_linux_virtual_machine" "vmA" {
   name                = "${var.prefix}-vm1"
@@ -111,7 +117,7 @@ resource "azurerm_linux_virtual_machine" "vmA" {
 
   admin_username = "adminuser"
   network_interface_ids = [
-    azurerm_network_interface.ngwA.id,
+    azurerm_network_interface.nic.id,
   ]
 
   admin_ssh_key {
