@@ -24,8 +24,13 @@ provider "azurerm" {
 variable "prefix" {
   default = "raven"
 }
+
 variable "stage" {
   default = "testing"
+}
+
+data "template_file" "vm_init_script" {
+  template = file("./scripts/initialize_setup.sh")
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -114,6 +119,8 @@ resource "azurerm_linux_virtual_machine" "vmA" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_F2"
+
+  custom_data = base64encode(data.template_file.vm_init_script.rendered)
 
   admin_username = "adminuser"
   network_interface_ids = [
