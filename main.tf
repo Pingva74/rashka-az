@@ -62,7 +62,7 @@ resource "azurerm_public_ip" "publicIp" {
   allocation_method   = "Dynamic"
 
   tags = {
-    environment = var.stage
+    environment = "${var.stage}"
   }
 }
 
@@ -85,7 +85,7 @@ resource "azurerm_network_security_group" "nsg" {
   }
 
   tags = {
-    environment = var.stage
+    environment = "${var.stage}"
   }
 }
 
@@ -103,7 +103,7 @@ resource "azurerm_network_interface" "nic" {
   }
 
   tags = {
-    environment = var.stage
+    environment = "${var.stage}"
   }
 }
 
@@ -122,13 +122,13 @@ resource "azurerm_linux_virtual_machine" "vmA" {
 
   custom_data = base64encode(data.template_file.vm_init_script.rendered)
 
-  admin_username = "adminuser"
+  admin_username = "root"
   network_interface_ids = [
     azurerm_network_interface.nic.id,
   ]
 
   admin_ssh_key {
-    username   = "adminuser"
+    username   = "root"
     public_key = file("~/.ssh/id_rsa.pub")
   }
 
@@ -147,4 +147,10 @@ resource "azurerm_linux_virtual_machine" "vmA" {
   tags = {
     environment = "${var.stage}"
   }
+}
+
+data "azurerm_public_ip" "public_ip" {
+  name                = azurerm_public_ip.publicIp.name
+  resource_group_name = azurerm_resource_group.rg.name
+  depends_on          = [azurerm_public_ip.publicIp, azurerm_linux_virtual_machine.vmA]
 }
