@@ -2,6 +2,7 @@
 .venv/
 
 .terraform/
+main.tfplan
 terraform.tfstate
 terraform.tfstate.backup
 .terraform.tfstate.lock.info
