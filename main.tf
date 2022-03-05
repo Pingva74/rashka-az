@@ -21,18 +21,6 @@ provider "azurerm" {
   features {}
 }
 
-variable "prefix" {
-  default = "raven"
-}
-
-variable "stage" {
-  default = "testing"
-}
-
-variable "script_path" {
-  default = "./scripts/initialize_setup.sh"
-}
-
 resource "azurerm_resource_group" "rg" {
   name     = "ddosGroup"
   location = "eastus"
@@ -121,14 +109,14 @@ resource "azurerm_linux_virtual_machine" "vmA" {
   location            = azurerm_resource_group.rg.location
   size                = "Standard_F2"
 
-  admin_username = "toor"
+  admin_username = var.username
   network_interface_ids = [
     azurerm_network_interface.nic.id,
   ]
 
   admin_ssh_key {
-    username   = "toor"
-    public_key = file("~/.ssh/id_rsa.pub")
+    username   = var.username
+    public_key = file("${var.public_key}")
   }
 
   os_disk {
@@ -159,8 +147,8 @@ resource "azurerm_linux_virtual_machine" "vmA" {
     connection {
       type        = "ssh"
       host        = self.public_ip_address
-      user        = self.admin_ssh_key.*.username
-      private_key = self.admin_ssh_key.*.public_key
+      user        = var.username
+      private_key = file("${var.public_key}")
     }
   }
 
