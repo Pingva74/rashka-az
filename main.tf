@@ -29,8 +29,8 @@ variable "stage" {
   default = "testing"
 }
 
-data "template_file" "vm_init_script" {
-  template = file("./scripts/initialize_setup.sh")
+variable "script_path" {
+  default = "./scripts/initialize_setup.sh"
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -100,6 +100,7 @@ resource "azurerm_network_interface" "nic" {
     subnet_id                     = azurerm_subnet.vsubA.id
     public_ip_address_id          = azurerm_public_ip.publicIp.id
     private_ip_address_allocation = "Dynamic"
+
   }
 
   tags = {
@@ -119,8 +120,6 @@ resource "azurerm_linux_virtual_machine" "vmA" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_F2"
-
-  custom_data = base64encode(data.template_file.vm_init_script.rendered)
 
   admin_username = "toor"
   network_interface_ids = [
@@ -142,6 +141,27 @@ resource "azurerm_linux_virtual_machine" "vmA" {
     offer     = "CentOS"
     sku       = "7.4"
     version   = "latest"
+  }
+
+  provisioner "local-exec" {
+    command = "echo $INST_IP >> $HOSTS"
+
+    environment = {
+      INST_IP = "${self.public_ip_address}"
+      HOSTS   = "inventory/hosts.all"
+    }
+  }
+
+  # We connect to our instance via Terraform and remotely executes our script using SSH
+  provisioner "remote-exec" {
+    script = var.script_path
+
+    connection {
+      type        = "ssh"
+      host        = self.public_ip_address
+      user        = self.admin_ssh_key.*.username
+      private_key = self.admin_ssh_key.*.public_key
+    }
   }
 
   tags = {
