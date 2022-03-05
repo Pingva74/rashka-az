@@ -122,13 +122,13 @@ resource "azurerm_linux_virtual_machine" "vmA" {
 
   custom_data = base64encode(data.template_file.vm_init_script.rendered)
 
-  admin_username = "root"
+  admin_username = "toor"
   network_interface_ids = [
     azurerm_network_interface.nic.id,
   ]
 
   admin_ssh_key {
-    username   = "root"
+    username   = "toor"
     public_key = file("~/.ssh/id_rsa.pub")
   }
 
@@ -153,4 +153,8 @@ data "azurerm_public_ip" "public_ip" {
   name                = azurerm_public_ip.publicIp.name
   resource_group_name = azurerm_resource_group.rg.name
   depends_on          = [azurerm_public_ip.publicIp, azurerm_linux_virtual_machine.vmA]
+}
+
+output "ip" {
+  value = data.azurerm_public_ip.public_ip.ip_address
 }
