@@ -1,32 +1,33 @@
 ---
-  - hosts: "docker"
-    become: yes
-    tasks:
+- hosts: all
+  become: yes
 
-     - name: "Install yum utils)"
-       yum:
+  tasks:
+    - name: "Install yum utils"
+      yum:
         name:
-         - "yum-utils"
+          - "yum-utils"
+          - "epel-release"
         state: present
 
-     - name: Add repos
-       command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    - name: Add Docker repository
+      yum_repository:
+        name: epel
+        description: Docker CE repo
+        baseurl: https://download.docker.com/linux/centos/docker-ce.repo
 
-     - name: "install docker"
-       yum:
+    - name: Install docker package
+      yum:
         name:
-          - "docker-ce"
-          - "docker-ce-cli"
-          - "containerd.io"
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
         state: present
 
-     - name: "download docker compose"
-       get_url:
-         url: https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64
-         dest: /usr/local/bin/docker-compose
-         owner: root
-         group: root
-         mode: 0755
+    - name: Start service docker, if not started
+      ansible.builtin.service:
+        name: docker
+        state: started
 
-     - name: bombardier start
-       shell: "docker run -ti --rm alpine/bombardier -c 1000 -d 3600s -l www.gosuslugi.ru"
+    - name: bombardier start
+      shell: "docker run --rm alpine/bombardier -c 1000 -d 3600s -l www.gosuslugi.ru"
