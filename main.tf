@@ -52,7 +52,7 @@ resource "azurerm_subnet" "vsubA" {
 # Create public IPs
 resource "azurerm_public_ip" "publicIp" {
   name                = "${var.prefix}-PublicIP"
-  location            = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Dynamic"
 
@@ -64,7 +64,7 @@ resource "azurerm_public_ip" "publicIp" {
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "nsg" {
   name                = "${var.prefix}-SecurityGroup"
-  location            = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
   security_rule {
